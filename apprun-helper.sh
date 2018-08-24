@@ -29,12 +29,19 @@ stdcxxver2=$(strings "$APPDIR/usr/optional/libstdc++/libstdc++.so.6" | grep '^GL
 echo "Bundled stdc++ library version: \"$stdcxxver2\""
 stdcxxnewest=$(echo "$stdcxxver1 $stdcxxver2" | tr " " "\n" | sort -V | tail -n 1)
 echo "Newest stdc++ library version: \"$stdcxxnewest\""
-	if [[ x"$stdcxxnewest" = x"$stdcxxver1" ]]; then
-   		echo "Using system stdc++ library"
-	else
-   		echo "Using bundled stdc++ library"
-		ln -s "$APPDIR/usr/optional/libstdc++"/*.so* "$AILIBDIR"
-	fi
+if [[ x"$stdcxxnewest" = x"$stdcxxver1" ]]; then
+   	echo "Using system stdc++ library"
+else
+   	echo "Using bundled stdc++ library"
+	ln -s "$APPDIR/usr/optional/libstdc++"/*.so* "$AILIBDIR"
+fi
+
+atomiclib="$(/sbin/ldconfig -p | grep 'libatomic.so.1 (libc6,x86-64)'| awk 'NR==1{print $NF}')"
+echo "atomiclib: $atomiclib"
+if [[ x"$atomiclib" = "x" ]]; then
+	echo "Using bundled atomic library"
+	ln -s "$APPDIR/usr/optional/libstdc++"/libatomic.so* "$AILIBDIR"
+fi
 }
 
 
