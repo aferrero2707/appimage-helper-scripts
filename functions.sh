@@ -118,6 +118,8 @@ copy_deps2()
   for FILE in $DEPS ; do
     if [ -e $FILE ] && [[ $(readlink -f $FILE)/ != $PWD/* ]] ; then
       echo "Copying library \"$FILE\"..."
+      suffix=$(echo "$FILE" | sed 's/\.so/\n/' | tail -n 1)
+      echo "  suffix: $suffix "$(wc $suffix)
       cp -v --parents -rfL $FILE ./ || true
     fi
   done
