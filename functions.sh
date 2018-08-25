@@ -105,6 +105,25 @@ copy_deps()
   rm -f DEPSFILE
 }
 
+# Copy the library dependencies of all exectuable files in the current directory
+# (it can be beneficial to run this multiple times)
+copy_deps2()
+{
+  PWD=$(readlink -f .)
+  FILES=$(find . -type f -executable -or -name *.so.* -or -name *.so | sort | uniq )
+  for FILE in $FILES ; do
+    ldd "${FILE}" | grep "=>" | awk '{print $3}' | xargs -I '{}' echo '{}' >> DEPSFILE
+  done
+  DEPS=$(cat DEPSFILE | sort | uniq)
+  for FILE in $DEPS ; do
+    if [ -e $FILE ] && [[ $(readlink -f $FILE)/ != $PWD/* ]] ; then
+      echo "Copying library \"$FILE\"..."
+      cp -v --parents -rfL $FILE ./ || true
+    fi
+  done
+  rm -f DEPSFILE
+}
+
 # Move ./lib/ tree to ./usr/lib/
 move_lib()
 {
