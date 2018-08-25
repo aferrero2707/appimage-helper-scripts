@@ -70,6 +70,7 @@ if [ x"$fclib" != "x" -a x"$fclib2" != "x" ]; then
    echo "Newest fontconfig library version: \"$fcvnewest\""
    if [[ x"$fcvnewest" = x"$fcv" ]]; then
       echo "Using system fontconfig library"
+      rm -f "$AILIBDIR"/libfontconfig*.so*
    else
       echo "Using bundled fontconfig library"
       ln -s "$APPDIR/usr/optional/fontconfig"/*.so* "$AILIBDIR"
