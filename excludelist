@@ -45,7 +45,7 @@ libdrm.so.2
 # libGL error: failed to load driver: swrast
 # Unrecognized OpenGL version
 
-libxcb.so.1
+#libxcb.so.1
 # Workaround for:
 # Fedora 23
 # symbol lookup error: /lib64/libxcb-dri3.so.0: undefined symbol: xcb_send_fd
