@@ -60,8 +60,8 @@ libX11.so.6
 # symbol lookup error: ./lib/libX11.so.6: undefined symbol: xcb_wait_for_reply64
 # Uncertain if this is required to be bundled for some distributions - if so we need to write a version check script and use LD_PRELOAD to load the system version if it is newer
 
-libxkbcommon.so.0
-libxkbcommon-x11.so.0
+#libxkbcommon.so.0
+#libxkbcommon-x11.so.0
 # Workaround for:
 # xkbcommon: ERROR: failed to add default include path ././/share/X11/xkb
 
