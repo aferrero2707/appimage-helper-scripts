@@ -109,6 +109,7 @@ copy_deps()
 # (it can be beneficial to run this multiple times)
 copy_deps2()
 {
+  mkdir -p usr/lib
   PWD=$(readlink -f .)
   FILES=$(find . -type f -executable -or -name *.so.* -or -name *.so | sort | uniq )
   for FILE in $FILES ; do
@@ -118,9 +119,35 @@ copy_deps2()
   for FILE in $DEPS ; do
     if [ -e $FILE ] && [[ $(readlink -f $FILE)/ != $PWD/* ]] ; then
       echo "Copying library \"$FILE\"..."
-      suffix=$(echo "$FILE" | sed 's/\.so/\n/' | tail -n 1)
-      echo "  suffix: $suffix "$(echo "$suffix" | wc)
-      cp -v --parents -rfL $FILE ./ || true
+      PARENT=""
+      if [[ -h "$FILE" ]]; then
+        PARENT=$(readlink "$FILE")
+      fi
+      #echo "  parent: $PARENT"
+      while [ -n "$PARENT" ]; do
+        DIR=$(dirname "$FILE")
+        PDIR=$(dirname "$PARENT")
+        if [ "$PDIR" != "." ]; then
+          cp -v -L "$FILE" ./usr/lib
+        else
+          cp -v -a "$FILE" ./usr/lib
+        fi
+        
+        ROOT=$(echo "$PARENT" | cut -c 1)
+        if [ x"$ROOT" != "x/" ]; then
+          FILE="$DIR/$PARENT"
+        else
+          FILE="$PARENT"
+        fi
+        
+        #echo "  file: $FILE"
+        PARENT=""
+        if [[ -h "$FILE" ]]; then
+          PARENT=$(readlink "$FILE")
+        fi
+        #echo "  parent: $PARENT"
+      done
+      cp -v -a "$FILE" ./usr/lib
     fi
   done
   rm -f DEPSFILE
@@ -151,6 +178,28 @@ delete_blacklisted()
   rm -rf usr/lib/pkgconfig || true
   find . -name '*.la' | xargs -i rm {}
 }
+
+
+# Delete blacklisted libraries
+delete_blacklisted2()
+{
+    printf '%s\n' "APPIMAGEBASE: ${APPIMAGEBASE}"
+    ls "${APPIMAGEBASE}"
+
+	pwd
+    while IFS= read -r line; do
+        #echo "line: ${line}"
+        #find . -name "${line}*"
+        #find . -name "${line}*" -delete
+        FLIST=$(find . -name "${line}*")
+        for F in $FLIST; do
+          rm -v -f "$F"
+        done
+    done < <(cat "$APPIMAGEBASE/excludelist" | sed '/^[[:space:]]*$/d' | sed '/^#.*$/d')
+    # TODO Try this, its cleaner if it works:
+    #done < "$APPIMAGEBASE/excludelist" | sed '/^[[:space:]]*$/d' | sed '/^#.*$/d'
+}
+
 
 # Echo highest glibc version needed by the executable files in the current directory
 glibc_needed()
