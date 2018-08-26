@@ -83,15 +83,32 @@ fi
 fix_library() {
 	lib="$1"
 	echo "Checking versions of library \"$lib\""
-	syslib="$(/sbin/ldconfig -p | grep \"$lib\" | grep '(libc6,x86-64)'| awk 'NR==1{print $NF}')"
-	syslib2=$(ls -1 ${syslib}* | tail -n 1)
-	syslib3="$(basename \"$syslib2\")"
-	echo "  system library: \"$syslib2\" ($syslib3)"
-	lv=$(echo "$syslib3" | sed 's/so\./\n/' | tail -n 1)
+	syslib="$(/sbin/ldconfig -p | grep "$lib" | grep '(libc6,x86-64)'| awk 'NR==1{print $NF}')"
+	if [ -n "$syslib" ]; then
+	  syslib2="$(ls -1 "${syslib}"* | tail -n 1)"
+	  syslib3="$(basename "$syslib2")"
+	  echo "  system library: \"$syslib2\" ($syslib3)"
+	  lv="$(echo "$syslib3" | sed 's/so\./\n/' | tail -n 1)"
+	else
+	  lv=""
+	fi
 	echo "  system library version: $lv"
 	
-	ailib=$(ls $AILIBDIR/$lib*)
-	ailib2=$(ls -1 ${ailib}* | tail -n 1)
-	ailib3="$(basename \"$ailib2\")"
-	echo "  bundled library: \"$ailib2\" ($ailib3)"
+	ailib="$(realpath "$(ls "$AILIBDIR/$lib.so"* | tail -n 1)")"
+	echo "  ailib: \"$ailib\""
+	if [ -n "$ailib" ]; then
+	  ailib3="$(basename "$ailib")"
+	  echo "  bundled library: \"$ailib\" ($ailib3)"
+	  lv2="$(echo "$ailib3" | sed 's/so\./\n/' | tail -n 1)"
+	else
+	  lv2=""
+	fi
+	echo "  bundled library version: $lv2"
+	
+	lvn=$(echo "$lv $lv2" | tr " " "\n" | sort -V | tail -n 1)
+    echo "  newest library version: \"$lvn\""
+	if [ "$lvn" = "$lv" ]; then
+	  echo "Removing bundled \"$lib\""
+	  rm -v -f "${AILIBDIR}/$lib.so"*
+	fi
 }
