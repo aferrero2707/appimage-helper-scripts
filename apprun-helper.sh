@@ -1,5 +1,5 @@
 make_temp_libdir() {
-	AILIBDIR="$(mktemp -d -t ailibdir.XXXX)"
+	AILIBDIR="$(mktemp -d)"
 	export AILIBDIR
 }
 
