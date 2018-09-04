@@ -1,7 +1,7 @@
 save_environment() {
-	AIPENV="$(mktemp)"
-	env | tr '\n' '\0' > "$AIPENV"
-	export AIPENV
+	TMPFILE="$(mktemp)"
+	env | tr '\n' '\0' > "$TMPFILE"
+	export AIPENV="$TMPFILE"
 }
 
 
