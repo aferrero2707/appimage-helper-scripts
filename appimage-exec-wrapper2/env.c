@@ -81,6 +81,7 @@ static char* const* env_from_buffer(FILE *file) {
         n++;
     }
     free(buffer);
+    DEBUG("\tenv: %p\n", (void*)env);
 
     return env;
 }
@@ -88,7 +89,14 @@ static char* const* env_from_buffer(FILE *file) {
 static char* const* read_env_from_process(pid_t pid) {
     char buffer[256] = {0};
 
-    snprintf(buffer, sizeof(buffer), "/proc/%d/environ", pid);
+    const char *envfile = getenv("AIPENV");
+    if (!envfile)
+        return NULL;
+    DEBUG("AIPENV = %s\n", envfile);
+
+
+    snprintf(buffer, sizeof(buffer), "%s", envfile);
+    /*snprintf(buffer, sizeof(buffer), "/proc/%d/environ", pid);*/
     DEBUG("Reading env from parent process: %s\n", buffer);
     FILE *env_file = fopen(buffer, "r");
     if (!env_file) {

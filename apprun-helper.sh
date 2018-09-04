@@ -1,3 +1,10 @@
+save_environment() {
+	AIPENV="$(mktemp)"
+	env | tr '\n' '\0' > "$AIPENV"
+	export AIPENV
+}
+
+
 make_temp_libdir() {
 	AILIBDIR="$(mktemp -d)"
 	export AILIBDIR

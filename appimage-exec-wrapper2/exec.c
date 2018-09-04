@@ -81,6 +81,7 @@ static int exec_common(execve_func_t function, const char *filename, char* const
     if (is_external_process(fullpath)) {
         DEBUG("External process detected. Restoring env vars from parent %d\n", getppid());
         env = read_parent_env();
+        DEBUG("exec_common: env: %p\n", (void*)env);
         if (!env)
             env = envp;
         else
