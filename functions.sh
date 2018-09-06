@@ -79,11 +79,11 @@ patch_usr()
   find usr/ -type f -executable -exec sed -i -e "s|/usr|././|g" {} \;
 }
 
-#patch_files()
-#{
-#  __prefix__=$1
-#  find usr/ -type f -executable -exec sed -i -e "s|/${__prefix__}/|././/|g" {} \;
-#}
+patch_files()
+{
+  __prefix__=$1
+  find usr/ -type f -executable -exec sed -i -e "s|/${__prefix__}/|././/|g" {} \;
+}
 
 # Download AppRun and make it executable
 get_apprun()
