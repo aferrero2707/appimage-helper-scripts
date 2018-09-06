@@ -79,6 +79,12 @@ patch_usr()
   find usr/ -type f -executable -exec sed -i -e "s|/usr|././|g" {} \;
 }
 
+patch_files()
+{
+  __prefix__=$1
+  find usr/ -type f -executable -exec sed -i -e "s|/${__prefix__}/|././/|g" {} \;
+}
+
 # Download AppRun and make it executable
 get_apprun()
 {
@@ -153,6 +159,32 @@ copy_deps2()
   rm -f DEPSFILE
 }
 
+
+copy_gcc_libs()
+{
+  stdcxxlib=$(PATH="/sbin:$PATH" ldconfig -p | grep 'libstdc++.so.6' | grep 'x86-64' | awk 'NR==1 {print $NF}')
+  echo "stdcxxlib: $stdcxxlib"
+  if [ x"$stdcxxlib" != "x" ]; then
+    mkdir -p usr/optional/libstdc++
+	cp -L "$stdcxxlib" usr/optional/libstdc++
+  fi
+
+  gomplib=$(PATH="/sbin:$PATH" ldconfig -p | grep 'libgomp.so.1' | grep 'x86-64' | awk 'NR==1{print $NF}')
+  echo "gomplib: $gomplib"
+  if [ x"$gomplib" != "x" ]; then
+    mkdir -p usr/optional/libstdc++
+	cp -L "$gomplib" usr/optional/libstdc++
+  fi
+
+  gcclib=$(PATH="/sbin:$PATH" ldconfig -p | grep 'libgcc_s.so.1' | grep 'x86-64' | awk 'NR==1{print $NF}')
+  echo "gcclib: $gcclib"
+  if [ x"$gcclib" != "x" ]; then
+    mkdir -p usr/optional/libgcc_s
+	cp -L "$gcclib" usr/optional/libgcc_s
+  fi
+}
+
+
 # Move ./lib/ tree to ./usr/lib/
 move_lib()
 {
@@ -217,6 +249,18 @@ get_desktopintegration()
 
   sed -i -e "s|^Exec=$REALBIN|Exec=$REALBIN.wrapper|g" $1.desktop
 }
+
+
+# Remove debugging symbols from bundled executables and libraries
+strip_binaries()
+{
+  chmod u+w -R "$APPDIR"
+  {
+    find $APPDIR/usr -type f -name "rawtherapee*" -print0
+    find "$APPDIR" -type f -regex '.*\.so\(\.[0-9.]+\)?$' -print0
+  } | xargs -0 --no-run-if-empty --verbose -n1 strip
+}
+
 
 # Generate AppImage; this expects $ARCH, $APP and $VERSION to be set
 generate_appimage()
