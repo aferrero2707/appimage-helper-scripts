@@ -71,34 +71,38 @@ static int is_external_process(const char *filename) {
         return 0;
     DEBUG("APPDIRS = %s\n", appdirs);
     printf("is_external_process: filename = %s\n", filename);
-    printf("is_external_process: APPDIRS = %s\n", appdirs);
+    /*printf("is_external_process: APPDIRS = %s\n", appdirs);*/
     int pos = 0;
     int len = strlen(appdirs);
-    printf("is_external_process: len = %d\n", len);
+    /*printf("is_external_process: len = %d\n", len);*/
     while( pos < len) {
       int start = pos;
-      printf("is_external_process: start = %d\n", start);
+      /*printf("is_external_process: start = %d\n", start);*/
       while( pos < len) {
-        printf("is_external_process: appdirs[%d] = %c\n", pos, appdirs[pos]);
+        //printf("is_external_process: appdirs[%d] = %c\n", pos, appdirs[pos]);
         if(appdirs[pos] == ':') {
-          printf("is_external_process: path delimiter found\n");
+          /*printf("is_external_process: path delimiter found\n");*/
           break;
         }
         pos += 1;
       }
       if(pos > start) {
         char* appdir = (char*)malloc(pos-start+1);
-        strncpy(appdir, &(appdir[start]), pos-start);
+        strncpy(appdir, &(appdirs[start]), pos-start);
         appdir[pos-start] = '\0';
-        printf("is_external_process: appdir = %s\n", appdir);
+        /*printf("is_external_process: appdir = %s\n", appdir);*/
         int result = strncmp(filename, appdir, MIN(strlen(filename), strlen(appdir)));
         free(appdir);
-        if( result) return 1;
+        if( result==0 ) {
+          printf("is_external_process: bundled process found\n");
+          return 0;
+        }
       }
       pos += 1;
     }
 
-    return 0;
+    printf("is_external_process: external process found\n");
+    return 1;
 }
 
 static int exec_common(execve_func_t function, const char *filename, char* const argv[], char* const envp[]) {
