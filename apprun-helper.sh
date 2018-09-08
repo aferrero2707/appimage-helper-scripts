@@ -8,6 +8,7 @@ save_environment() {
 make_temp_libdir() {
 	AILIBDIR="$(mktemp -d)"
 	export AILIBDIR
+    export LD_LIBRARY_PATH=$AILIBDIR:$LD_LIBRARY_PATH
 }
 
 
@@ -118,4 +119,29 @@ fix_library() {
 	  echo "Removing bundled \"$lib\""
 	  rm -v -f "${AILIBDIR}/$lib.so"*
 	fi
+}
+
+
+init_gdk_pixbuf()
+{
+  mkdir -p "$AILIBDIR/gdk-pixbuf-2.0"
+  cp "${APPDIR}/usr/lib/gdk-pixbuf-2.0/loaders.cache" "$AILIBDIR/gdk-pixbuf-2.0"
+  sed -i -e "s|LOADERSDIR|${APPDIR}/usr/lib/gdk-pixbuf-2.0/loaders|g" "$AILIBDIR/gdk-pixbuf-2.0/loaders.cache"
+  export GDK_PIXBUF_MODULE_FILE="$AILIBDIR/gdk-pixbuf-2.0/loaders.cache"
+  echo "GDK_PIXBUF_MODULE_FILE: $GDK_PIXBUF_MODULE_FILE"
+  #cat $GDK_PIXBUF_MODULE_FILE
+}
+
+
+init_gtk()
+{
+  init_gdk_pixbuf
+export GTK_PATH="$APPDIR/usr/lib/gtk-2.0"
+echo "GTK_PATH=${GTK_PATH}"
+
+export GTK_IM_MODULE_FILE="$APPDIR/usr/lib/gtk-2.0:$GTK_PATH"
+echo "GTK_IM_MODULE_FILE=${GTK_IM_MODULE_FILE}"
+
+export PANGO_LIBDIR="$APPDIR/usr/lib"
+echo "PANGO_LIBDIR=${PANGO_LIBDIR}"
 }
