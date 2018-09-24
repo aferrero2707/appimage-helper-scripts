@@ -122,6 +122,17 @@ fix_library() {
 }
 
 
+
+
+# Execute user-supplied startup hook scripts
+run_hooks()
+{
+  for h in "$APPDIR/startup_scripts"/*.sh; do
+    source "$h"
+  done
+}
+
+
 init_gdk_pixbuf()
 {
   mkdir -p "$AILIBDIR/gdk-pixbuf-2.0"
