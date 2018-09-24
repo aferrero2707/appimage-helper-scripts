@@ -134,9 +134,9 @@ copy_deps2()
         DIR=$(dirname "$FILE")
         PDIR=$(dirname "$PARENT")
         if [ "$PDIR" != "." ]; then
-          cp -v -L "$FILE" ./usr/lib
+          cp -u -v -L "$FILE" ./usr/lib
         else
-          cp -v -a "$FILE" ./usr/lib
+          cp -u -v -a "$FILE" ./usr/lib
         fi
         
         ROOT=$(echo "$PARENT" | cut -c 1)
@@ -153,7 +153,7 @@ copy_deps2()
         fi
         #echo "  parent: $PARENT"
       done
-      cp -v -a "$FILE" ./usr/lib
+      cp -u -v -a "$FILE" ./usr/lib
     fi
   done
   rm -f DEPSFILE
@@ -215,8 +215,8 @@ delete_blacklisted()
 # Delete blacklisted libraries
 delete_blacklisted2()
 {
-    printf '%s\n' "APPIMAGEBASE: ${APPIMAGEBASE}"
-    ls "${APPIMAGEBASE}"
+    #printf '%s\n' "APPIMAGEBASE: ${APPIMAGEBASE}"
+    #ls "${APPIMAGEBASE}"
 
 	pwd
     while IFS= read -r line; do
@@ -227,7 +227,7 @@ delete_blacklisted2()
         for F in $FLIST; do
           rm -v -f "$F"
         done
-    done < <(cat "$APPIMAGEBASE/excludelist" | sed '/^[[:space:]]*$/d' | sed '/^#.*$/d')
+    done < <(cat "$APPDIR/../excludelist" | sed '/^[[:space:]]*$/d' | sed '/^#.*$/d')
     # TODO Try this, its cleaner if it works:
     #done < "$APPIMAGEBASE/excludelist" | sed '/^[[:space:]]*$/d' | sed '/^#.*$/d'
 }
@@ -407,6 +407,15 @@ get_version()
   fi
   VERSION=$(echo $THEDEB | cut -d "~" -f 1 | cut -d "_" -f 2 | cut -d "-" -f 1 | sed -e 's|1%3a||g' | sed -e 's|.dfsg||g' )
   echo $VERSION
+}
+
+
+# Execute user-supplied hook scripts
+run_hooks()
+{
+  for h in "${APPDIR}/../scripts"/*.sh; do
+    source "$h"
+  done
 }
 
 # transfer.sh
