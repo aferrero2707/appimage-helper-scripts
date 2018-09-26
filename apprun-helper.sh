@@ -8,7 +8,7 @@ save_environment() {
 make_temp_libdir() {
 	AILIBDIR="$(mktemp -d)"
 	export AILIBDIR
-    export LD_LIBRARY_PATH=$AILIBDIR:$LD_LIBRARY_PATH
+    #export LD_LIBRARY_PATH=$AILIBDIR:$LD_LIBRARY_PATH
 }
 
 
@@ -133,6 +133,17 @@ run_hooks()
 }
 
 
+init_environment()
+{
+export PATH="$APPDIR/usr/bin:${PATH}:/sbin:/usr/sbin"
+export LD_LIBRARY_PATH="$AILIBDIR:/usr/lib:$LD_LIBRARY_PATH"
+#export XDG_DATA_DIRS="${APPDIR}/usr/share/:${APPDIR}/usr/share/mime/:${XDG_DATA_DIRS}"
+export XDG_DATA_DIRS="${APPDIR}/usr/share/:${XDG_DATA_DIRS}:/usr/local/share/:/usr/share/"
+export ZENITY_DATA_DIR="$APPDIR/usr/share/zenity"
+export GCONV_PATH="${APPDIR}/usr/lib/gconv"
+}
+
+
 init_gdk_pixbuf()
 {
   mkdir -p "$AILIBDIR/gdk-pixbuf-2.0"
@@ -155,4 +166,20 @@ echo "GTK_IM_MODULE_FILE=${GTK_IM_MODULE_FILE}"
 
 export PANGO_LIBDIR="$APPDIR/usr/lib"
 echo "PANGO_LIBDIR=${PANGO_LIBDIR}"
+}
+
+
+check_updates()
+{
+	REPO_SLUG="$1"
+	RELEASE_TAG="$2"
+	RELEASE_ID=$(curl -XGET "https://api.github.com/repos/${REPO_SLUG}/releases/tags/${RELEASE_TAG}" |  grep '"id":' | head -n 1 | tr -s ' ' | cut -d':' -f 2 | tr -d ' ' | cut -d',' -f 1)
+	
+	RELEASE_ASSETS=$(curl -XGET "https://api.github.com/repos/${REPO_SLUG}/releases/${RELEASE_ID}/assets")
+	ASSETS_IDS=$(echo "$RELEASE_ASSETS" | grep '"id":')
+	NASSETS=$(echo "$ASSETS_IDS" | wc -l)
+	
+	for AID in $(seq 1 2 $NASSETS); do
+		ID=$(echo "$ASSETS_IDS" | sed -n ${AID}p | tr -s " " | cut -f 3 -d" " | cut -f 1 -d ",")
+	done
 }
