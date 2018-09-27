@@ -48,7 +48,7 @@ sed -i -e "s|${gdk_pixbuf_moduledir}/||g" "$gdk_pixbuf_cache_file_bundle"
 printf '%s\n' "" "==================" "gdk-pixbuf cache:"
 cat "$gdk_pixbuf_cache_file_bundle"
 printf '%s\n' "==================" "gdk-pixbuf loaders:"
-ls "usr/${gdk_pixbuf_libdir_bundle}/loaders"
+ls "$APPDIR/usr/${gdk_pixbuf_libdir_bundle}/loaders"
 printf '%s\n' "=================="
 
 
