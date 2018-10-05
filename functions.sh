@@ -352,7 +352,9 @@ generate_type2_appimage()
     mv $HOME/.gnu* $HOME/.gnu_old ; mv .gnu* $HOME/
     VERSION=$VERSION_EXPANDED "$appimagetool" $@ -n -s --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$APP.AppDir/
   else
-    VERSION=$VERSION_EXPANDED "$appimagetool" $@ -n --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$APP.AppDir/
+    SIGN_OPT=""
+    if [ ! -z "$SIGN" ]; then SIGN_OPT="-s"; fi
+    VERSION=$VERSION_EXPANDED "$appimagetool" $@ -n $SIGN_OPT --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$APP.AppDir/
   fi
   set -x
   mkdir -p ../out/ || true
