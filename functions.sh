@@ -354,6 +354,7 @@ generate_type2_appimage()
   else
     SIGN_OPT=""
     if [ ! -z "$SIGN" ]; then SIGN_OPT="-s"; fi
+    echo "AppImageTool command: \"$appimagetool\" $@ -n $SIGN_OPT --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$APP.AppDir/"
     VERSION=$VERSION_EXPANDED "$appimagetool" $@ -n $SIGN_OPT --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$APP.AppDir/
   fi
   set -x
