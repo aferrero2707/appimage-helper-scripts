@@ -135,6 +135,7 @@ run_hooks()
 
 init_environment()
 {
+export APPDIRS=$APPDIR:$APPDIRS
 export PATH="$APPDIR/usr/bin:${PATH}:/sbin:/usr/sbin"
 export LD_LIBRARY_PATH="$AILIBDIR:/usr/lib:$LD_LIBRARY_PATH"
 #export XDG_DATA_DIRS="${APPDIR}/usr/share/:${APPDIR}/usr/share/mime/:${XDG_DATA_DIRS}"
