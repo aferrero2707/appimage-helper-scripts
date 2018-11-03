@@ -70,7 +70,7 @@ static int is_external_process(const char *filename) {
     if (!appdirs)
         return 0;
     DEBUG("APPDIRS = %s\n", appdirs);
-    /*printf("is_external_process: filename = %s\n", filename);*/
+    printf("is_external_process: filename = %s\n", filename);
     /*printf("is_external_process: APPDIRS = %s\n", appdirs);*/
     int pos = 0;
     int len = strlen(appdirs);
@@ -101,7 +101,7 @@ static int is_external_process(const char *filename) {
       pos += 1;
     }
 
-    /*printf("is_external_process: external process found\n");*/
+    printf("is_external_process: external process found\n");
     return 1;
 }
 
