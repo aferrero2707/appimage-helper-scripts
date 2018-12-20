@@ -22,10 +22,10 @@ mkdir -p "$APPDIR/usr/lib"
 cp -a "${PYTHON_LIBDIR}/python${PYTHON_VERSION}" "$APPDIR/usr/lib" || exit 1
 PYGLIB_LIBDIR=$(pkg-config --variable=libdir pygobject-2.0)
 if [ x"${PYGLIB_LIBDIR}" = "x" ]; then
-	echo "Could not determine PYGOBJECT library path, exiting."
-	exit 1
+	cp -a "${PYGLIB_LIBDIR}"/libpyglib*.so* "$APPDIR/usr/lib"
+else
+	echo "Could not determine PYGOBJECT-2.0 library path."
 fi
-cp -a "${PYGLIB_LIBDIR}"/libpyglib*.so* "$APPDIR/usr/lib"
 (cd "$APPDIR/usr" && mkdir -p lib64 && cd lib64 && rm -rf python${PYTHON_VERSION} && ln -s ../lib/python${PYTHON_VERSION} .) || exit 1
 ls -l "$APPDIR/usr/lib64"
 
