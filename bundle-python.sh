@@ -21,7 +21,7 @@ rm -rf "$APPDIR/usr/lib/python${PYTHON_VERSION}"
 mkdir -p "$APPDIR/usr/lib"
 cp -a "${PYTHON_LIBDIR}/python${PYTHON_VERSION}" "$APPDIR/usr/lib" || exit 1
 PYGLIB_LIBDIR=$(pkg-config --variable=libdir pygobject-2.0)
-if [ x"${PYGLIB_LIBDIR}" = "x" ]; then
+if [ x"${PYGLIB_LIBDIR}" != "x" ]; then
 	cp -a "${PYGLIB_LIBDIR}"/libpyglib*.so* "$APPDIR/usr/lib"
 else
 	echo "Could not determine PYGOBJECT-2.0 library path."
