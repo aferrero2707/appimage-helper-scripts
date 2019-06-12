@@ -362,8 +362,8 @@ generate_type2_appimage()
 
   echo "generate_type2_appimage: GEN_UPDATE_ZSYNC_GITHUB=${GEN_UPDATE_ZSYNC_GITHUB}"
   if [ x"${GEN_UPDATE_ZSYNC_GITHUB}" = "x1" ]; then
-    echo "AppImageTool update command: \"$appimagetool\" ./$APP.AppDir/usr/share/applications/*.desktop -u \"gh-releases-zsync|${GITHUB_USER}|${GITHUB_REPO}|continuous|${APP}-*.zsync\""
-    "$appimagetool" ./$APP.AppDir/usr/share/applications/*.desktop -u "gh-releases-zsync|${GITHUB_USER}|${GITHUB_REPO}|continuous|${APP}-*.zsync"
+    echo "AppImageTool update command: \"$appimagetool\" ./$APP.AppDir -u \"gh-releases-zsync|${GITHUB_USER}|${GITHUB_REPO}|continuous|${APP}-*.zsync\""
+    "$appimagetool" ./$APP.AppDir -u "gh-releases-zsync|${GITHUB_USER}|${GITHUB_REPO}|continuous|${APP}-*.zsync"
   fi
 
   set -x
