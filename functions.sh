@@ -357,13 +357,14 @@ generate_type2_appimage()
     SIGN_OPT=""
     if [ ! -z "$SIGN" ]; then SIGN_OPT="-s"; fi
     
-    UPDATE_OPT=""
+    echo "generate_type2_appimage: GEN_UPDATE_ZSYNC_GITHUB=${GEN_UPDATE_ZSYNC_GITHUB}"
     if [ x"${GEN_UPDATE_ZSYNC_GITHUB}" = "x1" ]; then
-      UPDATE_OPT="-u \"gh-releases-zsync|${GITHUB_USER}|${GITHUB_REPO}|continuous|${APP}-*.zsync\""
+      echo "AppImageTool command: \"$appimagetool\" $@ -n ${SIGN_OPT} -u \"gh-releases-zsync|${GITHUB_USER}|${GITHUB_REPO}|continuous|${APP}-*.zsync\" -v ./$APP.AppDir/"
+      VERSION=$VERSION_EXPANDED "$appimagetool" $@ -n ${SIGN_OPT} -u "gh-releases-zsync|${GITHUB_USER}|${GITHUB_REPO}|continuous|${APP}-*.zsync" -v ./$APP.AppDir/
+    else     
+      echo "AppImageTool command: \"$appimagetool\" $@ -n ${SIGN_OPT} -v ./$APP.AppDir/"
+      VERSION=$VERSION_EXPANDED "$appimagetool" $@ -n ${SIGN_OPT} -v ./$APP.AppDir/
     fi
-    echo "generate_type2_appimage: GEN_UPDATE_ZSYNC_GITHUB=${GEN_UPDATE_ZSYNC_GITHUB}  UPDATE_OPT=\"${UPDATE_OPT}\""
-    echo "AppImageTool command: \"$appimagetool\" $@ -n ${SIGN_OPT} ${UPDATE_OPT} -v ./$APP.AppDir/"
-    VERSION=$VERSION_EXPANDED "$appimagetool" $@ -n ${SIGN_OPT} ${UPDATE_OPT} -v ./$APP.AppDir/
   fi
 
   set -x
