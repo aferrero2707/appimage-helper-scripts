@@ -360,7 +360,9 @@ generate_type2_appimage()
     VERSION=$VERSION_EXPANDED "$appimagetool" $@ -n ${SIGN_OPT} --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$APP.AppDir/
   fi
 
+  echo "generate_type2_appimage: GEN_UPDATE_ZSYNC_GITHUB=${GEN_UPDATE_ZSYNC_GITHUB}"
   if [ x"${GEN_UPDATE_ZSYNC_GITHUB}" = "x1" ]; then
+    echo "AppImageTool update command: \"$appimagetool\" ./$APP.AppDir/usr/share/applications/*.desktop -u \"gh-releases-zsync|${GITHUB_USER}|${GITHUB_REPO}|continuous|${APP}-*.zsync\""
     "$appimagetool" ./$APP.AppDir/usr/share/applications/*.desktop -u "gh-releases-zsync|${GITHUB_USER}|${GITHUB_REPO}|continuous|${APP}-*.zsync"
   fi
 
