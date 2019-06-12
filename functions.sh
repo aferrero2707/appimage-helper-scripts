@@ -342,6 +342,8 @@ generate_type2_appimage()
     VERSION_EXPANDED=$VERSION
   fi
 
+  echo "generate_type2_appimage: VERSION_EXPANDED=\"${VERSION_EXPANDED}\""
+
   set +x
   GLIBC_NEEDED=$(glibc_needed)
   if ( [ ! -z "$KEY" ] ) && ( ! -z "$TRAVIS" ) ; then
@@ -354,9 +356,14 @@ generate_type2_appimage()
   else
     SIGN_OPT=""
     if [ ! -z "$SIGN" ]; then SIGN_OPT="-s"; fi
-    echo "AppImageTool command: \"$appimagetool\" $@ -n $SIGN_OPT --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$APP.AppDir/"
-    VERSION=$VERSION_EXPANDED "$appimagetool" $@ -n $SIGN_OPT --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$APP.AppDir/
+    echo "AppImageTool command: \"$appimagetool\" $@ -n ${SIGN_OPT} --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$APP.AppDir/"
+    VERSION=$VERSION_EXPANDED "$appimagetool" $@ -n ${SIGN_OPT} --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$APP.AppDir/
   fi
+
+  if [ x"${GEN_UPDATE_ZSYNC_GITHUB}" = "x1" ]; then
+    "$appimagetool" ./$APP.AppDir/usr/share/applications/*.desktop -u "gh-releases-zsync|${GITHUB_USER}|${GITHUB_REPO}|continuous|${APP}-*.zsync"
+  fi
+
   set -x
   mkdir -p ../out/ || true
   mv *.AppImage* ../out/
