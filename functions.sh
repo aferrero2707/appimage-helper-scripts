@@ -362,8 +362,8 @@ generate_type2_appimage()
       UPDATE_OPT="-u \"gh-releases-zsync|${GITHUB_USER}|${GITHUB_REPO}|continuous|${APP}-*.zsync\""
     fi
     echo "generate_type2_appimage: GEN_UPDATE_ZSYNC_GITHUB=${GEN_UPDATE_ZSYNC_GITHUB}  UPDATE_OPT=\"${UPDATE_OPT}\""
-    echo "AppImageTool command: \"$appimagetool\" $@ -n ${SIGN_OPT} ${UPDATE_OPT} --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$APP.AppDir/"
-    VERSION=$VERSION_EXPANDED "$appimagetool" $@ -n ${SIGN_OPT} ${UPDATE_OPT} --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$APP.AppDir/
+    echo "AppImageTool command: \"$appimagetool\" $@ -n ${SIGN_OPT} ${UPDATE_OPT} -v ./$APP.AppDir/"
+    VERSION=$VERSION_EXPANDED "$appimagetool" $@ -n ${SIGN_OPT} ${UPDATE_OPT} -v ./$APP.AppDir/
   fi
 
   set -x
